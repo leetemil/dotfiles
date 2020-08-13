@@ -1,25 +1,18 @@
-source ~/repositories/dotfiles/zsh/antigen.zsh
+autoload -U compinit && compinit
 
-# Load the oh-my-zsh library
-antigen use oh-my-zsh
+# Dynamically load plugins every time
+# source <(antibody init)
+# antibody bundle < ~/dotfiles/zsh/zsh_plugins.txt
 
-plugins=(
-    # bundles from oh-my-zsh
-    git
-    pip
-    command-not-found
-    kubectl
-    colored-man-pages
-    cargo
-    # bundles from repositories
-    zsh-users/zsh-syntax-highlighting
-    zsh-users/zsh-autosuggestions
-    zsh-users/zsh-completions
-)
+# statically load plugins (faster, allegedly)
+# if you update your plugins, run load_plugins.sh
+source ~/dotfiles/zsh/zsh_plugins.sh
 
-for plugin ($plugins); do
-    antigen bundle $plugin
-done
+source <(kubectl completion zsh)
+source <(minikube completion zsh)
 
-# apply antigen
-antigen apply
+# aliases
+alias python=python3.8
+alias pip=pip3.8
+alias vim=nvim
+alias v=nvim
