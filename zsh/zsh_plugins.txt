@@ -4,13 +4,17 @@ ohmyzsh/ohmyzsh path:plugins/pip
 ohmyzsh/ohmyzsh path:plugins/command-not-found
 ohmyzsh/ohmyzsh path:plugins/colored-man-pages
 ohmyzsh/ohmyzsh path:plugins/cargo
+ohmyzsh/ohmyzsh path:plugins/colorize
+ohmyzsh/ohmyzsh path:plugins/history
+ohmyzsh/ohmyzsh path:lib/
+
 
 mafredri/zsh-async
 
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-completions
 
-sindresorhus/pure
-# zsh-users/zsh-syntax-highlighting
+#sindresorhus/pure
+zsh-users/zsh-syntax-highlighting
 zdharma/fast-syntax-highlighting
 zsh-users/zsh-history-substring-search

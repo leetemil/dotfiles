@@ -11,8 +11,17 @@ source ~/dotfiles/zsh/zsh_plugins.sh
 source <(kubectl completion zsh)
 source <(minikube completion zsh)
 
+source ~/dotfiles/zsh/prompt.sh
+
+ZSH_COLORIZE_TOOL=chroma
+ZSH_COLORIZE_STYLE="colorful"
+
+
 # aliases
 alias python=python3.8
 alias pip=pip3.8
-alias vim=nvim
-alias v=nvim
+alias vim="nvim -p"
+alias v="nvim -p"
+
+# make ls after cd
+chpwd() ls
