@@ -1,5 +1,7 @@
 autoload -U compinit && compinit
 
+setopt globdots
+
 # Dynamically load plugins every time
 # source <(antibody init)
 # antibody bundle < $HOME/dotfiles/zsh/zsh_plugins.txt
@@ -26,6 +28,7 @@ alias pip=pip3.8
 alias vim="nvim -p"
 alias v="nvim -p"
 alias cat=bat
+alias ls=exa
 
 # make ls after cd
 chpwd() exa -a 
