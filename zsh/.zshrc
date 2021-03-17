@@ -20,8 +20,6 @@ ZSH_COLORIZE_STYLE="colorful"
 source $HOME/.profile
 
 # aliases
-alias python=python3.8
-alias pip=pip3.8
 alias vim="nvim -p"
 alias v="nvim -p"
 alias cat=bat
