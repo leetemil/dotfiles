@@ -10,15 +10,12 @@ setopt globdots
 # if you update your plugins, run load_plugins.sh
 source $HOME/dotfiles/zsh/zsh_plugins.sh
 
-source <(kubectl completion zsh)
-source <(minikube completion zsh)
-
-#source $HOME/dotfiles/zsh/prompt.sh
+# if you need kube completion
+# source <(kubectl completion zsh)
+# source <(minikube completion zsh)
 
 ZSH_COLORIZE_TOOL=chroma
 ZSH_COLORIZE_STYLE="colorful"
-
-# export PATH="$PATH:$HOME/.cargo/bin"
 
 source $HOME/.profile
 
