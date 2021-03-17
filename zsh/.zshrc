@@ -13,7 +13,7 @@ source $HOME/dotfiles/zsh/zsh_plugins.sh
 source <(kubectl completion zsh)
 source <(minikube completion zsh)
 
-source $HOME/dotfiles/zsh/prompt.sh
+#source $HOME/dotfiles/zsh/prompt.sh
 
 ZSH_COLORIZE_TOOL=chroma
 ZSH_COLORIZE_STYLE="colorful"
@@ -32,3 +32,4 @@ alias ls=exa
 
 # make ls after cd
 chpwd() exa -a 
+eval "$(starship init zsh)"
