@@ -1,14 +1,28 @@
 autoload -U compinit && compinit
-
 setopt globdots
 
-# Dynamically load plugins every time
-# source <(antibody init)
-# antibody bundle < $HOME/dotfiles/zsh/zsh_plugins.txt
+source ~/.zplug/init.zsh
 
-# statically load plugins (faster, allegedly)
-# if you update your plugins, run load_plugins.sh
-source $HOME/dotfiles/zsh/zsh_plugins.sh
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt APPEND_HISTORY
+
+zplug "plugins/git",   from:oh-my-zsh
+zplug "plugins/command-not-found",   from:oh-my-zsh
+zplug "plugins/colored-man-pages",   from:oh-my-zsh
+zplug "plugins/colorize",   from:oh-my-zsh
+zplug "plugins/history",   from:oh-my-zsh
+zplug "lib/",   from:oh-my-zsh
+
+zplug "zsh-users/zsh-autosuggestions", defer:2
+zplug "zsh-users/zsh-completions", defer:2
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug "zsh-users/zsh-history-substring-search"
+
 
 # if you need kube completion
 # source <(kubectl completion zsh)
@@ -17,14 +31,6 @@ source $HOME/dotfiles/zsh/zsh_plugins.sh
 ZSH_COLORIZE_TOOL=chroma
 ZSH_COLORIZE_STYLE="colorful"
 
-source $HOME/.profile
+zplug load
 
-# aliases
-alias vim="nvim -p"
-alias v="nvim -p"
-alias cat=bat
-alias ls=exa
-
-# make ls after cd
-chpwd() exa -a 
 eval "$(starship init zsh)"

@@ -1,5 +1,7 @@
 # Read `man 5 sway` for a complete reference.
 
+font Fira Code 11
+
 ### Variables
 
 # Logo key. Use Mod1 for Alt.
@@ -13,8 +15,11 @@ set $right l
 
 # Your preferred terminal emulator
 set $term alacritty 
-set $browser google-chrome
+set $browser google-chrome-stable
 set $file-explorer nautilus
+
+set $script_dir "~/.config/sway"
+set $lock_script $scriptdir/lock.sh
 
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
@@ -34,11 +39,10 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 # resumed. It will also lock your screen before your computer goes to sleep.
 
 exec swayidle -w \
-    timeout 300 "pactl list | grep RUNNING || ~/.config/sway/lock.sh" \
+    timeout 300 "pactl list | grep RUNNING || $lock_script" \
     timeout 600 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
-    before-sleep "~/.config/sway/lock.sh"
-
+    before-sleep "$lock_script"
 ### Input configuration
 #
 # Example configuration:
@@ -93,7 +97,7 @@ exec light -N 10
     # Start file explorer
     bindsym $mod+n exec $file-explorer
 
-    bindsym $mod+shift+s exec swaylock-blur --blur-sigma 15
+    bindsym $mod+shift+s exec "~/.config/sway/lock.sh"
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
