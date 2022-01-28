@@ -32,5 +32,5 @@ ZSH_COLORIZE_TOOL=chroma
 ZSH_COLORIZE_STYLE="colorful"
 
 zplug load
-
+export PATH="/home/empe/.local/bin:$PATH"
 eval "$(starship init zsh)"
