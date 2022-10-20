@@ -13,11 +13,11 @@ set $down j
 set $up k
 set $right l
 
-# Your preferred terminal emulator
-set $term alacritty 
-set $browser chromium 
-set $file-explorer nautilus
+set $term alacritty
+set $browser chromium
+set $file_explorer nautilus
 
+# me: pretty sure this lock script does not work anymore
 set $script_dir "~/.config/sway"
 set $lock_script $scriptdir/lock.sh
 
@@ -34,22 +34,43 @@ default_border pixel 5
 hide_edge_borders smart
 
 ### Output configuration
-# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+set $wallpapers_path $HOME/Pictures/wallpapers
+output * bg `find $wallpapers_path -type f | shuf -n 1` fill
 
-# Example configuration:
-#   output HDMI-A-1 resolution 1920x1080 position 1920,0
-# You can get the names of your outputs by running: swaymsg -t get_outputs
+# monitor configuration
+# you can get the names of your outputs by running: swaymsg -t get_outputs
+
+# laptop
+output eDP-1 resolution 1920x1080 position 3840,0
+# output eDP-1 resolution 1920x1080 position 0,0
+# output HDMI-A-2 resolution 4096x2160 position 1920,0
+
+# at work; low res because otherwise docking station cant handle
+output DP-4 resolution 1920x1080 position 1920,0
+output DP-5 resolution 1920x1080 position 0,0
+output DP-6 resolution 1920x1080 position 1920,0
+output DP-7 resolution 1920x1080 position 0,0
+
+# at home
+output DP-2 resolution 1920x1080 position 1920,0
+# output DP-2 resolution 2560x1440 position 1289,0
+# output HDMI-A-2 resolution 1920x1080 position 1920,0
+output HDMI-A-2 resolution 2560x1440 position 1280,0
+
+# output eDP-1 resolution 1920x1080 position 5120,0
+# output DP-4 resolution 2560x1440 position 2560,0
+# output DP-5 resolution 2560x1440 position 0,0
 
 # exec below will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
 
+# me: pretty sure this is not working
 exec swayidle -w \
-  timeout 300 "pactl list | grep RUNNING" || $lock_script \
-  timeout 600 'swaymsg "output * dpms off"' \
-  resume 'swaymsg "output * dpms on"' \
-  before-sleep $lock_script
+  timeout 300 "(pactl list | grep RUNNING) || ~/.config/sway/lock.sh" \
+  timeout 600 swaymsg "output * dpms off" \
+  resume swaymsg "output * dpms on" \
+  before-sleep "~/.config/sway/lock.sh"
 
 exec $script_dir/init.sh
 exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
@@ -68,17 +89,18 @@ exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
 
-# this shit works, but should not use *
+# use alt + shift to toggle US, DK keyboard layout
 input "type:keyboard" {
   xkb_layout "us, dk"
   xkb_options "grp:alt_shift_toggle"
 }
 
 # Screen brightness is at least 10%
+# me: does not work as of 2022-10-20
 exec light -N 10
 
 ### Key bindings
-    
+
 # Screenshot
 bindsym Print exec grimshot copy area
 
@@ -89,6 +111,7 @@ bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master $volumestep%- u
 bindsym XF86AudioMute exec amixer -q -D pulse set Master toggle
 
 # Screen brightness controls
+# me: does not work as of 2022-10-20
 set $brightnessstep 20
 bindsym XF86MonBrightnessUp exec light -A $brightnessstep
 bindsym XF86MonBrightnessDown exec light -U $brightnessstep
@@ -106,8 +129,9 @@ bindsym $mod+d exec $menu
 bindsym $mod+c exec $browser
 
 # Start file explorer
-bindsym $mod+n exec $file-explorer
+bindsym $mod+n exec $file_explorer
 
+# me: works as of 2022-10-20
 bindsym $mod+shift+s exec "~/.config/sway/lock.sh"
 
 # Drag floating windows by holding down $mod and left mouse button.
@@ -227,13 +251,13 @@ mode "resize" {
   # right will grow the containers width
   # up will shrink the containers height
   # down will grow the containers height
-  bindsym $left resize shrink width $size 
-  bindsym $down resize grow height $size 
-  bindsym $up resize shrink height $size 
+  bindsym $left resize shrink width $size
+  bindsym $down resize grow height $size
+  bindsym $up resize shrink height $size
   bindsym $right resize grow width $size
 
   # Ditto, with arrow keys
-  bindsym Left resize shrink width $size 
+  bindsym Left resize shrink width $size
   bindsym Down resize grow height $size
   bindsym Up resize shrink height $size
   bindsym Right resize grow width $size

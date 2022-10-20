@@ -22,7 +22,7 @@ sound=$(echo $volume_and_muted | cut -d ' ' -f 2)
 suffix=' %'
 prefix=' '
 
-if [ $sound == "on" ]
+if [ $sound = "on" ] # single '=' to compare strings
 then
   if [ $volume -lt 25 ]
   then
@@ -68,7 +68,7 @@ then
   else
     net_icon='⏚'
     network_status="Eth"
-  fi 
+  fi
 
 else
   network_status="No connection"

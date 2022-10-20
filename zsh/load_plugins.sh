@@ -1,1 +1,0 @@
-antibody bundle < ~/dotfiles/zsh/zsh_plugins.txt > ~/dotfiles/zsh/zsh_plugins.sh
