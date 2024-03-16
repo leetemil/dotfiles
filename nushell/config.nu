@@ -768,6 +768,3 @@ source ~/.cache/carapace/init.nu
 
 use ~/.config/nushell/gruvbox-dark-hard.nu
 $env.config = ($env.config | merge {color_config: (gruvbox-dark-hard)})
-
-source /home/emp/.asdf/asdf.nu
-use ~/.config/nushell/kubectl-completion.nu *
