@@ -1,8 +1,9 @@
 # dotfiles
-My dotfiles. Is probably a big fat fork from https://github.com/Parth/dotfiles
+as of this commit (2024-03-16), my (bleeding edge) setup is: 
+- operating system: nixos
+- terminal: alacritty
+- shell: nushell
+- editor: helix
+- window-manager: hyprland
 
-I know at least one dependency, which is the [starship prompt](starship.rs).
-It can be installed using
-```
-curl -fsSL https://starship.rs/install.sh | bash
-```
+i switched to nix today, so the nix-related configs here are trash. i have no clue what i am doing wrt. nix and hyprland. the rest works fine
