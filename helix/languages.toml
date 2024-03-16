@@ -1,0 +1,36 @@
+[[language]]
+name = "go"
+auto-format = true
+language-servers = ["golangci-lint", "gopls"]
+formatter = { command = "goimports" }
+
+[language-server.pyright-langserver]
+command = "pyright-langserver"
+args = ["--stdio"]
+config = { autoSearchPaths = true, diagnosticMode = "workspace" }
+
+[language-server.ruff-lsp]
+command = "ruff-lsp"
+
+[language-server.golangci-lint]
+command = "golangci-lint" 
+args = ["run", "--out-format", "json", "--issues-exit-code=1"]
+
+[language-server.vscode-json-language-server]
+command = "vscode-json-language-server"
+args = ["--stdio"]
+config = { provideFormatter = true, json = { validate = { enable = true }, keeplines = { enable = true } } }
+
+[[language]]
+name = "json"
+indent = { tab-width = 4, unit = "    "}
+
+[[language]]
+name = "python"
+auto-format = true
+formatter = { command = "black", args = ["--quiet", "-"]}
+language-servers = ["pyright-langserver", "ruff-lsp", "pylsp"]
+
+[[language]]
+name = "yaml"
+language-servers = ["yaml-language-server"]
