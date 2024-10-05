@@ -41,9 +41,6 @@ style = "Italic"
 family = "JetBrains Mono"
 style = "Regular"
 
-[shell]
-program = "/usr/bin/nu"
-
 [window.padding]
 x = 12
 y = 0

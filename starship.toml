@@ -20,5 +20,14 @@ disabled = true
 [kubernetes]
 disabled = false
 symbol = '🌀 '
-[kubernetes.context_aliases]
-'emp-(?P<var_cluster>[\w]+)-k8s-cph3' = '$var_cluster'
+contexts = [
+  { context_pattern = 'emp-(?P<var_cluster>[\w]+)-k8s-cph3', context_alias = '$var_cluster' },
+]
+
+[nix_shell]
+disabled = false
+symbol = '🦕'
+impure_msg = '[impure](bold red)'
+pure_msg = '[pure](bold green)'
+unknown_msg = '[unknown](bold yellow)'
+format = '[$symbol nix-shell $state( \($name\))](bold blue) '

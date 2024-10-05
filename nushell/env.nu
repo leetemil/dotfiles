@@ -43,43 +43,12 @@ $env.NU_PLUGIN_DIRS = [
     # ($nu.default-config-dir | path join 'plugins') # add <nushell-config-dir>/plugins
 ]
 
-# To add entries to PATH, you can use the following pattern:
-# $env.PATH = ($env.PATH | split row (char esep) | prepend '/some/path')
-
 $env.GPG_TTY = $"(tty)"
-$env.XGD_CURRENT_DESKTOP = 'sway'
-$env.EDITOR = 'helix'
+$env.EDITOR = 'hx'
 
 $env.PATH = (
     $env.PATH | split row (char esep)
-        | append '/opt/cinc-workstation/bin'
-        | append '/opt/cinc-workstation/embedded/bin'
         | prepend '/home/emp/.local/bin'
-        | prepend $"(go env GOPATH)/home/emp/.local/bin"
-        | prepend '/home/linuxbrew/.linuxbrew/bin'
-        | prepend '/home/emp/.asdf/installs/golang/1.21.1/packages/bin'
+        | prepend '/home/emp/go/bin'
+        | prepend '/home/emp/.local/share/gem/ruby/3.1.0/bin'
 )
-
-# magic spell to make default aws credentials variables
-open ~/.aws/credentials
-    | lines
-    | reduce --fold {lines: [], default: 0} {|line, acc|
-            # we've hit the default section for the first time; start appending
-            if (($line | str starts-with "[default]") and ($acc.default == 0)) {
-                $acc | upsert default ($acc.default + 1)
-            # we've hit a section that is not default; stop appending
-            } else if (($line | str starts-with "[") and ($acc.default == 1)) {
-                $acc | upsert default ($acc.default + 1)
-            # otherwise, continue appending, if we're doing that
-            } else if ($acc.default == 1) {
-                $acc | upsert lines ($in.lines | append $line)
-            # or just move to next line
-            } else {
-                $acc
-            }
-        }
-    | get lines
-    | grep aws # throw away region, endpoint_url, etc.
-    | parse -r '(?<key>\w+)\s*=\s*(?<value>\w+)'
-    | reduce --fold {} {|it, acc| $acc | upsert $it.key $it.value }
-    | load-env

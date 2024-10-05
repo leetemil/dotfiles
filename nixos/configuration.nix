@@ -1,14 +1,11 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
-{ config, lib, pkgs, options, ... }:
+{pkgs, options, ...}:
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [ # include the results of the hardware scan.
       ./hardware-configuration.nix
       ./nix-alien.nix
+      /home/emp/stuff/nix-playground/osquery-service.nix
     ];
 
   boot.loader.systemd-boot.enable = true;
@@ -38,11 +35,16 @@
       "2.dk.pool.ntp.org" 
       "3.dk.pool.ntp.org" 
     ];
-    firewall.enable = true;
+    firewall = {
+      enable = true;
+      extraCommands = ''
+        iptables -P INPUT DROP
+      '';
+    };
+
   };
 
   time.timeZone = "Europe/Copenhagen";
-  sound.enable = true;
 
   virtualisation = {  
     docker = {
@@ -50,107 +52,147 @@
     };
   };
 
-  users.users.emp = {
-    createHome = true;
-    isNormalUser = true;
-    description = "Emil Petersen";
-    home = "/home/emp";
-    uid = 1000;
-    group = "users";
-    shell = pkgs.nushell;
-    extraGroups = [ "docker" "kvm" "wheel" "input" "video" "audio" "disk" "networkmanager" "systemd-journal" ];
-    packages = [];
-  };
+  users.users = {
+      emp = {
+        createHome = true;
+        isNormalUser = true;
+        description = "Emil Petersen";
+        home = "/home/emp";
+        uid = 1000;
+        group = "users";
+        shell = pkgs.nushell;
+        extraGroups = [ "docker" "kvm" "wheel" "input" "video" "audio" "disk" "networkmanager" "systemd-journal" ];
+        packages = [];
+      };
+    };
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.overlays = [
+    # there is an issue with clamav version 1.3.1, so use overlay to fix that
+    (final: prev: {
+      clamav = prev.clamav.overrideAttrs (old: rec {
+        version = "1.4.0";
+        src = pkgs.fetchurl {
+          url = "https://www.clamav.net/downloads/production/${old.pname}-${version}.tar.gz";
+          hash = "sha256-1nqymeXKBdrT2imaXqc9YCCTcqW+zX8TuaM8KQM4pOY=";
+        };
+      });
+    })
+  ];
+  
   environment.systemPackages = with pkgs; [
-    vim
-    wget
-    git
-    htop
-    networkmanagerapplet
-    openvpn
-    networkmanager-openvpn
-    which
-    helix
-    chromium
+    age
     alacritty
-    starship
-    wl-clipboard
-    grimblast
-    home-manager
-    gnome.nautilus
-    cinnamon.nemo
-    nix-prefetch-scripts
-    nix-index
-    udisks2
-    firefox
+    bash-language-server
+    bazel_7    bazel-buildtools
+    black
     brightnessctl
-    waybar
-    swaynotificationcenter
-    polkit-kde-agent
-    xdg-desktop-portal-hyprland
-    slurp
-    wofi
-    hyprlock
-    hypridle
-    hyprshot
-    jq
-    yq
-    grim
-    swappy
+    btop
+    buf-language-server
+    capitaine-cursors
+    carapace
+    chromium
     clamav
-    kubectl
-    libgcrypt
-    ranger
-    file
-    patchelf
-    ruby
-    qemu
-    openssh
-    dig
+    clickhouse
+    cobra-cli
+    cups
     curl
-    zlib
-    ripgrep
-    go
-    vscode
-    yazi
-    glow
-
-    # bazelisk
-    bazel
-    bazel-buildtools
-    protoc-gen-go
-    protoc-gen-go-grpc
-    protobuf
     delve
-    gotools
-
-    # language servers
-    vscode-langservers-extracted
-    gopls
+    devenv
+    dig
+    dockerfile-language-server-nodejs
+    file
+    firefox
+    git
+    glib
+    glow
+    gnumake
+    go
     golangci-lint
     golangci-lint-langserver
-    yaml-language-server
-    bash-language-server
-    dockerfile-language-server-nodejs
+    gopls
+    go-task
+    gotools
+    grafana
+    grim
+    grimblast
+    gtk3
+    helix
     helm-ls
+    home-manager
+    htop
+    hyprcursor
+    hypridle
+    hyprlock
+    hyprshot
+    isort
+    jq
+    just
+    kubectl
+    kubelogin-oidc
+    kubernetes-helm
+    kubeseal
+    lazygit
+    libgcc
+    libgcrypt
+    marp-cli
+    minio-client
+    nautilus
+    nemo
+    networkmanagerapplet
+    networkmanager-openvpn
+    nftables
     nil
-    buf-language-server
+    nix-index
+    nix-prefetch-scripts
+    nwg-look
+    openssh
+    openssl
+    opentofu
+    openvpn
+    patchelf
+    pavucontrol
+    pipenv
+    polkit-kde-agent
+    postgresql
+    protobuf
+    protoc-gen-go
+    protoc-gen-go-grpc
+    pyenv
     pyright
+    qemu
+    ranger
+    ripgrep
+    ruby
+    rubyPackages.solargraph
     ruff-lsp
     rust-analyzer
-
-    carapace
-    clickhouse
-    xz
-    openssl
-    minio-client
-    kubernetes-helm
-    grafana
-    unzip
+    rustup
+    slurp
+    socat
+    starship
+    swappy
+    swaynotificationcenter
     traceroute
-    kubeseal
+    tree
+    udisks2
+    unzip
+    vim
+    vscode
+    vscode-langservers-extracted
+    waybar
+    wget
+    which
+    wl-clipboard
+    wlsunset
+    wofi
+    xcur2png
+    xz
+    yaml-language-server
+    yazi
+    yq
+    zellij
+    zlib
 
     # python3
     (python3.withPackages(ps: with ps; [ 
@@ -170,16 +212,18 @@
     ]))
   ];
 
+  # install a stub ELF loader to print an informative error message in the event 
+  # that a user attempts to run an ELF binary not compiled for NixOS
+  environment.stub-ld.enable = true;
+
   environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
+    NIXOS_OZONE_WL = "1"; # hint electron apps to use wayland
+    WLR_NO_HARDWARE_CURSORS = "1"; # might fix invisible cursor
     SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
+    GOPROXY = "https://goproxy.one.com,https://proxy.golang.org,direct";
   };
 
   programs = {
-    # gnupg.agent = {
-    #   enable = true;
-    #   enableSSHSupport = true;
-    # };
     hyprland = {
       enable = true;
       xwayland.enable = false;
@@ -218,21 +262,18 @@
     };
   };
 
-  # services.openssh.enable = true;
   services = {
-    # # one.com-flavored osquery service requires for compliance reasons - does not work yet: make some Nix-voodoo to build from cthulhu repo
-    # osquery = {
-    #   enabled = true;
-    #   description = "Service for osquery exporter";
-    #   serviceConfig = {
-    #     ExecStart = "/usr/bin/osquery_exporter -config-file /etc/one.com/osquery/config.yaml -push-address https://push.one.com -push-frequency 3600s -cache-ttl 21600s";
-    #     Group = "root";
-    #     User = "root";
-    #     Type = "simple";
-    #   };
-    #   wantedBy = [ "default.target" ];
-    # };
+    printing = {
+      enable = true;
+    };
     
+    # to detect printers automagically
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+    };
+
     # this is the login prompt - it'll also run Hyprland once logged in
     greetd = {
       enable = true;
@@ -270,6 +311,9 @@
  
   nix = {
     settings.experimental-features = [ "nix-command" "flakes" ];
+    extraOptions = ''
+      trusted-users = root emp
+    '';
     # gc = {
     #   automatic = true;
     #   dates = "weekly";
