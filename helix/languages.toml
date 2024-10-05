@@ -34,3 +34,12 @@ language-servers = ["pyright-langserver", "ruff-lsp", "pylsp"]
 [[language]]
 name = "yaml"
 language-servers = ["yaml-language-server"]
+
+[language-server.rubocop]
+command = "rubocop"
+args = ["--lsp"]
+
+[[language]]
+name = "ruby"
+auto-format = true
+language-servers = ["solargraph", "rubocop"]

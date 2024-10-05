@@ -1,15 +1,4 @@
-# Nushell Config File
-#
-# version = "0.84.0"
-
-alias vim = nvim
-alias k = kubectl
-alias bazel = bazelisk
-alias hx = helix
-
-def authdns-pytest [] {
-    PYTHONPATH="./scripts" AUTHDNS_CONFIG="test/authdns.yaml" pytest -vrp test
-}
+# alias bazel = bazelisk
 
 def get-kitchen-port [] int {
     ps
@@ -29,61 +18,20 @@ def command-i-have-to-write-to-ssh-to-kitchen [] {
     print $"ssh -p ($port) -i .kitchen/kitchen-qemu.key kitchen@localhost"
 }
 
+alias kitchen = nix-alien-ld /opt/cinc-workstation/embedded/bin/ruby -- /opt/cinc-workstation/bin/kitchen
+
+alias nixos-bookshelf-vendor-dependencies = nix-alien-ld /opt/cinc-workstation/embedded/bin/ruby -- /opt/cinc-workstation/embedded/bin/bookshelf-vendor-dependencies
+
 def emp-copy-profile-from-local-kitchen-instance [] {
     let port = get-kitchen-port
     let file = "/tmp/kitchen/cache/graph_profile.out"
     scp -P 60253 -i .kitchen/kitchen-qemu.key $"kitchen@localhost:($file)" .
 }
 
-def one-cluster-names [] {
-    [
-        'test1-k8s-cph3'
-        'wip1-k8s-cph3'
-        'mgmt1-k8s-cph3'
-        'live1-k8s-cph3'
-        'live2-k8s-cph3'
-    ]
-}
-
 def whats-the-protoc-option-thing [] {
     'option go_package = "./rpc";'
 }
 
-def one-kubeseal [
-    cluster : string@one-cluster-names
-    raw_yaml : string
-    --cluster-wide = false
-    --namespace : string
-    ] {
-    let cert = (
-        $'https://sealed-secrets.default.($cluster).one.com/v1/cert.pem'
-    )
-    let scope = if $cluster_wide {"cluster-wide"} else {"namespace-wide"}
-
-    print $raw_yaml
-
-    $raw_yaml
-    | kubeseal --format yaml --cert $cert --scope $scope
-    | complete
-}
-
-def download-bazel-deps [] {
-    go install github.com/bazelbuild/bazelisk@latest
-    go install github.com/bazelbuild/buildtools/buildifier@latest
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-    print ".. done!"
-    print "Now, edit your '~/.config/nushell/env.nu' file"
-    print "so that '$env.PATH' includes the go version bin"
-    print "Also, reshim 'asdf' with 'asdf reshim'"
-}
-
-def download-go-packages [] {
-    go install golang.org/x/tools/gopls@latest          # LSP
-    go install github.com/go-delve/delve/cmd/dlv@latest # Debugger
-    go install golang.org/x/tools/cmd/goimports@latest  # Formatter
-    print ".. done!"
-}
 
 # run rubocop linting in the current directory (assumed to be chef cookbook)
 # this is the same linting image as run on most ci-runners
@@ -93,7 +41,7 @@ def clint [...args] {
         -v $"($env.PWD):/workdir"
         -w /workdir
         harbor.one.com/standard-images/ci/onecom-kitchen-build:focal-rootless
-        rubocop --color $args
+        rubocop --color ...$args
   )
 }
 
@@ -103,27 +51,6 @@ def dsb-vpn-fix [] {
 
 def chef-dependencies [] {
     /opt/cinc-workstation/embedded/bin/bookshelf-vendor-dependencies
-}
-
-def hubble-port-forward [] {
-  print "######################################################################"
-  print "Hubble is a tool for high-level monitoring of how Cilium operates in a"
-  print "Cluster. To use the UI for a given cluster, keep this process running"
-  print "and go to http://localhost:12000"
-  print "This will provide an overview of the detected traffic-flows for any"
-  print "given namespace and a sampled list of recent traffic."
-  print "Note: Remember to click the 'Visual' button and disable any hiding."
-  print "Docs: https://sysdoc.one.com/base/k8s-cph3/cilium.md#cilium-hubble"
-  print ""
-  print "Kubernetes context is $(kubectl config current-context)"
-  print ""
-  print "######################################################################"
-  (
-    kubectl port-forward
-      --namespace kube-system
-      --address 0.0.0.0
-      --address :: service/hubble-ui 12000:80
-  )
 }
 
 def codeclimate [] {
@@ -211,7 +138,7 @@ $env.config = {
         case_sensitive: false # set to true to enable case-sensitive completions
         quick: true    # set this to false to prevent auto-selecting completions when only one remains
         partial: true    # set this to false to prevent partial filling of the prompt
-        algorithm: "prefix"    # prefix or fuzzy
+        algorithm: "fuzzy"    # prefix or fuzzy
         external: {
             enable: true # set to false to prevent nushell looking into $env.PATH to find more suggestions, `false` recommended for WSL users as this look up may be very slow
             max_results: 100 # setting it lower can improve completion performance at the cost of omitting some options
@@ -230,15 +157,40 @@ $env.config = {
         vi_normal: underscore # block, underscore, line, blink_block, blink_underscore, blink_line (underscore is the default)
     }
 
-    # color_config: $dark_theme # if you want a more interesting theme, you can replace the empty record with `$dark_theme`, `$light_theme` or another custom record
-    use_grid_icons: true
     footer_mode: "25" # always, never, number_of_rows, auto
     float_precision: 2 # the precision for displaying floats in tables
     buffer_editor: "" # command that will be used to edit the current line buffer with ctrl+o, if unset fallback to $env.EDITOR and $env.VISUAL
     use_ansi_coloring: true
     bracketed_paste: true # enable bracketed paste, currently useless on windows
     edit_mode: emacs # emacs, vi
-    shell_integration: false # enables terminal shell integration. Off by default, as some terminals have issues with this.
+    shell_integration: {
+      # osc2 abbreviates the path if in the home_dir, sets the tab/window title, shows the running command in the tab/window title
+      osc2: true
+      # osc7 is a way to communicate the path to the terminal, this is helpful for spawning new tabs in the same directory
+      osc7: true
+      # osc8 is also implemented as the deprecated setting ls.show_clickable_links, it shows clickable links in ls output if your terminal supports it
+      osc8: true
+      # osc9_9 is from ConEmu and is starting to get wider support. It's similar to osc7 in that it communicates the path to the terminal
+      osc9_9: false
+      # osc133 is several escapes invented by Final Term which include the supported ones below.
+      # 133;A - Mark prompt start
+      # 133;B - Mark prompt end
+      # 133;C - Mark pre-execution
+      # 133;D;exit - Mark execution finished with exit code
+      # This is used to enable terminals to know where the prompt is, the command is, where the command finishes, and where the output of the command is
+      osc133: true
+      # osc633 is closely related to osc133 but only exists in visual studio code (vscode) and supports their shell integration features
+      # 633;A - Mark prompt start
+      # 633;B - Mark prompt end
+      # 633;C - Mark pre-execution
+      # 633;D;exit - Mark execution finished with exit code
+      # 633;E - NOT IMPLEMENTED - Explicitly set the command line with an optional nonce
+      # 633;P;Cwd=<path> - Mark the current working directory and communicate it to the terminal
+      # and also helps with the run recent menu in vscode
+      osc633: true
+      # reset_application_mode is escape \x1b[?1l and was added to help ssh work better
+      reset_application_mode: true
+    }
     render_right_prompt_on_last_line: false # true or false to enable or disable right prompt to be rendered on last line of the prompt.
 
     hooks: {
