@@ -1,5 +1,5 @@
 # dotfiles
-as of this commit (2024-03-16), my (bleeding edge) setup is: 
+current setup is: 
 - operating system: nixos
 - terminal: alacritty
 - shell: nushell
@@ -7,4 +7,5 @@ as of this commit (2024-03-16), my (bleeding edge) setup is:
 - window-manager: hyprland
 - compositor: wayland
 
-i switched to nix today, so the nix-related configs here are trash. i have no clue what i am doing wrt. nix and hyprland. the rest works fine
+on my todo:
+- [ ] bundle user-config files into a nix expression. I hope that I can use home-manager without having to rip the actual config files apart, into nix expressions. I am going to keep the config that each tool was born with, not the nix overlay.
