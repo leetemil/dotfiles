@@ -1,4 +1,4 @@
-{pkgs, options, ...}:
+{inputs, pkgs, options, ...}:
 
 {
   imports =
@@ -37,7 +37,11 @@
     ];
     firewall = {
       enable = true;
+      # first ACCEPT rule is for kitchen multicasting
+      # second rule is to please osquery
       extraCommands = ''
+        iptables -A INPUT -d 239.0.0.0/8 -j ACCEPT
+        ip6tables -P INPUT DROP
         iptables -P INPUT DROP
       '';
     };
@@ -61,12 +65,31 @@
         uid = 1000;
         group = "users";
         shell = pkgs.nushell;
+        extraGroups = [ "wireshark" "docker" "kvm" "wheel" "input" "video" "audio" "disk" "networkmanager" "systemd-journal" ];
+        packages = [];
+      };
+      emil = {
+        createHome = true;
+        isNormalUser = true;
+        description = "";
+        home = "/home/emil";
+        uid = 1001;
+        group = "users";
+        shell = pkgs.nushell;
         extraGroups = [ "docker" "kvm" "wheel" "input" "video" "audio" "disk" "networkmanager" "systemd-journal" ];
         packages = [];
       };
     };
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+      "dotnet-core-combined"
+      "dotnet-sdk-6.0.428"
+      "dotnet-sdk-7.0.410"
+      "dotnet-sdk-wrapped-6.0.428"
+    ];
+  };
   nixpkgs.overlays = [
     # there is an issue with clamav version 1.3.1, so use overlay to fix that
     (final: prev: {
@@ -81,32 +104,47 @@
   ];
   
   environment.systemPackages = with pkgs; [
-    age
     alacritty
     bash-language-server
-    bazel_7    bazel-buildtools
-    black
+    bazel_7
+    gh
+    bazel-buildtools
     brightnessctl
-    btop
-    buf-language-server
+    buf
+    marksman
+    markdown-oxide
+    ocaml
+    dotnet-sdk_8
+    roslyn-ls
+    csharp-ls
     capitaine-cursors
+    btop
     carapace
     chromium
+    minikube
     clamav
+    isort
+    wireshark
+    nftables
     clickhouse
     cobra-cli
     cups
     curl
+    netcoredbg
+    xournalpp
     delve
     devenv
     dig
+    age
+    opentofu
+    dive
+    wlsunset
     dockerfile-language-server-nodejs
     file
     firefox
     git
     glib
     glow
-    gnumake
     go
     golangci-lint
     golangci-lint-langserver
@@ -114,26 +152,29 @@
     go-task
     gotools
     grafana
+    jujutsu
+    rclone
     grim
     grimblast
     gtk3
     helix
     helm-ls
     home-manager
+    pavucontrol
     htop
     hyprcursor
     hypridle
+    black
+    gnumake
     hyprlock
     hyprshot
-    isort
+    lazygit
     jq
     just
     kubectl
-    kubelogin-oidc
     kubernetes-helm
+    kubelogin-oidc
     kubeseal
-    lazygit
-    libgcc
     libgcrypt
     marp-cli
     minio-client
@@ -148,10 +189,8 @@
     nwg-look
     openssh
     openssl
-    opentofu
     openvpn
     patchelf
-    pavucontrol
     pipenv
     polkit-kde-agent
     postgresql
@@ -168,8 +207,8 @@
     ruff-lsp
     rust-analyzer
     rustup
-    slurp
     socat
+    slurp
     starship
     swappy
     swaynotificationcenter
@@ -183,8 +222,8 @@
     waybar
     wget
     which
+    libgcc
     wl-clipboard
-    wlsunset
     wofi
     xcur2png
     xz
@@ -221,14 +260,20 @@
     WLR_NO_HARDWARE_CURSORS = "1"; # might fix invisible cursor
     SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
     GOPROXY = "https://goproxy.one.com,https://proxy.golang.org,direct";
+    DOTNET_CLI_TELEMETRY_OPTOUT = 1; # disable dotnet telemetry
   };
 
   programs = {
     hyprland = {
       enable = true;
+      # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       xwayland.enable = false;
     };
     git.enable = true;
+    # gnupg.agent = {
+    #   enable = true;
+    #   enableSSHSupport = true;
+    # };
     ssh.startAgent = true;
 
     nix-ld = {
@@ -262,6 +307,7 @@
     };
   };
 
+  # services.openssh.enable = true;
   services = {
     printing = {
       enable = true;
@@ -303,12 +349,11 @@
     fira-code-symbols
     jetbrains-mono
     font-awesome
-    nerdfonts
     noto-fonts
     powerline-fonts
     fira-sans
-  ];
- 
+  ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+
   nix = {
     settings.experimental-features = [ "nix-command" "flakes" ];
     extraOptions = ''

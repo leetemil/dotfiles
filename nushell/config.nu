@@ -1,8 +1,31 @@
 # alias bazel = bazelisk
 
-def get-kitchen-port [] int {
+def authdns-pytest [] {
+    PYTHONPATH="./scripts" AUTHDNS_CONFIG="test/authdns.yaml" pytest -vrp test
+}
+
+def bazel-in-docker [] {
+  print "NOTE: this has mounted various folder to the container:"
+  print " - k8s settings (~/.kube)"
+  print " - local cache dir (~/stuff/docker_bazel_cache_made_by_me)"
+  print " - local bash history (~/stuff/docker_bazel_bash_history)"
+  print " - the current directory (.)"
+  print " - docker credentials (~/.docker/config.json)"
+  (
+    docker run 
+      -v "/home/emp/.kube:/home/builder/.kube" 
+      -v "/home/emp/stuff/docker_bazel_cache_made_by_me:/home/builder/.cache/bazel" 
+      -v "/home/emp/stuff/docker_bazel_bash_history:/home/builder/.bash_history" 
+      -v ".:/builds" 
+      -v "/home/emp/.docker/config.json:/home/builder/.docker/config.json" 
+      -e USER=emp 
+      -ti harbor.one.com/standard-images/ci/bazel:8.0.1-focal-rootless bash
+  )
+}
+
+def get-kitchen-port []: nothing -> int {
     ps
-    | where name == "qemu-system-x86_64"
+    | where name =~ "qemu-system"
     | first
     | get pid
     | open $"/proc/($in)/cmdline"
@@ -28,10 +51,56 @@ def emp-copy-profile-from-local-kitchen-instance [] {
     scp -P 60253 -i .kitchen/kitchen-qemu.key $"kitchen@localhost:($file)" .
 }
 
+def one-cluster-names [] {
+    [
+        'test1-k8s-cph3'
+        'wip1-k8s-cph3'
+        'mgmt1-k8s-cph3'
+        'live1-k8s-cph3'
+        'live2-k8s-cph3'
+    ]
+}
+
 def whats-the-protoc-option-thing [] {
     'option go_package = "./rpc";'
 }
 
+def one-kubeseal [
+    cluster : string@one-cluster-names
+    raw_yaml : string
+    --cluster-wide = false
+    --namespace : string
+    ] {
+    let cert = (
+        $'https://sealed-secrets.default.($cluster).one.com/v1/cert.pem'
+    )
+    let scope = if $cluster_wide {"cluster-wide"} else {"namespace-wide"}
+
+    print $raw_yaml
+
+    $raw_yaml
+    | kubeseal --format yaml --cert $cert --scope $scope
+    | complete
+}
+
+def download-bazel-deps [] {
+    go install github.com/bazelbuild/bazelisk@latest
+    go install github.com/bazelbuild/buildtools/buildifier@latest
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+    print ".. done!"
+    print "Now, edit your '~/.config/nushell/env.nu' file"
+    print "so that '$env.PATH' includes the go version bin"
+    print "Also, reshim 'asdf' with 'asdf reshim'"
+
+}
+
+def download-go-packages [] {
+    go install golang.org/x/tools/gopls@latest          # LSP
+    go install github.com/go-delve/delve/cmd/dlv@latest # Debugger
+    go install golang.org/x/tools/cmd/goimports@latest  # Formatter
+    print ".. done!"
+}
 
 # run rubocop linting in the current directory (assumed to be chef cookbook)
 # this is the same linting image as run on most ci-runners
@@ -51,6 +120,27 @@ def dsb-vpn-fix [] {
 
 def chef-dependencies [] {
     /opt/cinc-workstation/embedded/bin/bookshelf-vendor-dependencies
+}
+
+def hubble-port-forward [] {
+  print "######################################################################"
+  print "Hubble is a tool for high-level monitoring of how Cilium operates in a"
+  print "Cluster. To use the UI for a given cluster, keep this process running"
+  print "and go to http://localhost:12000"
+  print "This will provide an overview of the detected traffic-flows for any"
+  print "given namespace and a sampled list of recent traffic."
+  print "Note: Remember to click the 'Visual' button and disable any hiding."
+  print "Docs: https://sysdoc.one.com/base/k8s-cph3/cilium.md#cilium-hubble"
+  print ""
+  print "Kubernetes context is $(kubectl config current-context)"
+  print ""
+  print "######################################################################"
+  (
+    kubectl port-forward
+      --namespace kube-system
+      --address 0.0.0.0
+      --address :: service/hubble-ui 12000:80
+  )
 }
 
 def codeclimate [] {
@@ -147,8 +237,7 @@ $env.config = {
     }
 
     filesize: {
-        metric: true # true => KB, MB, GB (ISO standard), false => KiB, MiB, GiB (Windows standard)
-        format: "auto" # b, kb, kib, mb, mib, gb, gib, tb, tib, pb, pib, eb, eib, auto
+        unit: "metric"
     }
 
     cursor_shape: {
@@ -157,7 +246,7 @@ $env.config = {
         vi_normal: underscore # block, underscore, line, blink_block, blink_underscore, blink_line (underscore is the default)
     }
 
-    footer_mode: "25" # always, never, number_of_rows, auto
+    footer_mode: "auto" # always, never, number_of_rows, auto
     float_precision: 2 # the precision for displaying floats in tables
     buffer_editor: "" # command that will be used to edit the current line buffer with ctrl+o, if unset fallback to $env.EDITOR and $env.VISUAL
     use_ansi_coloring: true

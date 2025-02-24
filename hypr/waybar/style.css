@@ -39,6 +39,10 @@ window#waybar {
   background-color: #900000;
 }
 
+#taskbar button {
+  margin: 5px 2px 5px 2px;
+}
+
 #taskbar button.active {
   background: gray;
 }

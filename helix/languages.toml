@@ -1,7 +1,10 @@
 [[language]]
 name = "go"
 auto-format = true
+# wait with golangci-lint until 1.60.1 or something; there is a bug atm (2024-08-15)
+# it will use all memory
 language-servers = ["golangci-lint", "gopls"]
+# language-servers = ["gopls"]
 formatter = { command = "goimports" }
 
 [language-server.pyright-langserver]
@@ -35,6 +38,12 @@ language-servers = ["pyright-langserver", "ruff-lsp", "pylsp"]
 name = "yaml"
 language-servers = ["yaml-language-server"]
 
+[[language-server.yaml-language-server.config.yaml]]
+format = { enable = true }
+validation = true
+schemas = { kubernetets = "*.k8s.yaml" }
+
+
 [language-server.rubocop]
 command = "rubocop"
 args = ["--lsp"]
@@ -43,3 +52,11 @@ args = ["--lsp"]
 name = "ruby"
 auto-format = true
 language-servers = ["solargraph", "rubocop"]
+
+[[language]]
+name = "c-sharp"
+language-servers = ["csharp-language-server"]
+formatter = { command = "dotnet", args = ["format"] }
+
+[language-server.csharp-language-server]
+command = "csharp-ls"

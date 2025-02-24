@@ -9,6 +9,17 @@ shell = ["nu", "-c"]
 bufferline = "always"
 insert-final-newline = true
 color-modes = true
+# Setting end-of-line-diagnostics, cursor-line or other-lines to
+# anything other than "disable" enables inline diagnostics.
+end-of-line-diagnostics = "hint"
+
+[editor.inline-diagnostics]
+# Minimum severity to show a diagnostic on the primary cursor's line.
+# Note that `cursor-line` diagnostics are hidden in insert mode.
+cursor-line = "error"
+# Minimum severity to show a diagnostic on other lines:
+# other-lines = "error"
+
 
 [editor.statusline]
 left = ["mode", "spinner", "version-control", "file-name"]
@@ -39,3 +50,6 @@ pageup = "no_op"
 pagedown = "no_op"
 home = "no_op"
 end = "no_op"
+
+[keys.normal.space]
+i = ":toggle lsp.display-inlay-hints"
