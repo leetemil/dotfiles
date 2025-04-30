@@ -4,11 +4,6 @@
 # Inserts a blank line between shell prompts
 add_newline = true
 
-# I want an indicator whether the current SHELL is zsh or nu
-[env_var]
-variable = 'TELL_STARSHIP_I_AM_USING_ZSH'
-format = "[zsh](bold red) "
-
 [character] # The name of the module we are configuring is 'character'
 success_symbol = '[%](bold green)'
 error_symbol = '[%](bold red)'
