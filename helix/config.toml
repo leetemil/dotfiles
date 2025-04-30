@@ -9,6 +9,7 @@ shell = ["nu", "-c"]
 bufferline = "always"
 insert-final-newline = true
 color-modes = true
+true-color = true
 # Setting end-of-line-diagnostics, cursor-line or other-lines to
 # anything other than "disable" enables inline diagnostics.
 end-of-line-diagnostics = "hint"
