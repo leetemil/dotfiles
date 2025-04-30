@@ -19,7 +19,7 @@
         createHome = true;
         isNormalUser = true;
         description = "Emil Petersen";
-        home = "/home/emp";
+        home = "/home/epe";
         uid = 1000;
         group = "users";
         shell = pkgs.nushell;
