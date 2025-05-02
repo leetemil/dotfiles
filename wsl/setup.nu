@@ -14,7 +14,10 @@ def setup [repo: string, parts: list<string>, --wsl]  {
     return
   }
 
-  let config_dir = $"($env.HOME)/.config/"
+  ln --symbolic --force $"($repo)/wsl/configuration.nix" /etc/nixos/
+  ln --symbolic --force $"($repo)/wsl/flake.nix" /etc/nixos/
+
+  let config_dir = $"/home/epe/.config/"
 
   if not ($config_dir | path exists) {
     print $"Making ($config_dir)"
@@ -33,7 +36,7 @@ def setup_part [repo: string, config_dir: string, part: string] {
   ln --symbolic --force $"($repo)/($part)" --target-directory $config_dir
 
   if $part == "nushell" {
-    let cache_dir = $"($env.HOME)/.cache/carapace/"
+    let cache_dir = $"/home/epe/.cache/carapace/"
     if not ($cache_dir | path exists) {
       mkdir $cache_dir
     }
@@ -53,7 +56,7 @@ def remove_existing [target: string] {
 }
 
 let repo_url = "https://github.com/leetemil/dotfiles.git"
-let repo_dir = $"($env.HOME)/repos/dotfiles"
+let repo_dir = $"/home/epe/repos/dotfiles"
 
 clone_repo  $repo_url $repo_dir
 setup --wsl $repo_dir ["nushell" "helix" "starship.toml"]
