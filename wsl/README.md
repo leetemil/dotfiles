@@ -14,3 +14,4 @@ There is no official WSL distro for NixOS, but the community have one here https
 - some emojis do not render out of the box with font `Cascadia Code`;
   go get the latest release here https://github.com/microsoft/cascadia-code/releases and install a Nerd Font (NF) variant.
   Set font to `Cascadia Code NF` in WSL.
+- run `$ nu ./wsl/setup.nu` to symlink stuff from the repo to `.config`; see script for details.
