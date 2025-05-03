@@ -1,0 +1,82 @@
+* {
+  font-family: "JetBrains Mono";
+  font-size: 14px;
+  font-weight: bold;
+  font-style: normal;
+  border: none;
+  border-radius: 4px;
+  min-height: 0;
+}
+
+window#waybar {
+  padding: 0px 5px 0px 5px;
+  background: black;
+  color: white;
+}
+
+#workspaces {
+  padding: 5px 2px 5px 2px;
+}
+
+#workspaces button {
+  background: rgb(95, 103, 106);
+  color: white;
+  margin: 0px 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active {
+  background: rgb(40, 85, 119);
+  min-width: 40px;
+}
+
+#workspaces button:hover {
+  background: rgb(75, 120, 154);
+  box-shadow: inherit;
+}
+
+#workspaces button.urgent {
+  background-color: #900000;
+}
+
+#taskbar button {
+  margin: 5px 2px 5px 2px;
+}
+
+#taskbar button.active {
+  background: gray;
+}
+
+#custom-notification,
+#tray,
+#battery,
+#wireplumber,
+#clock {
+  color: white;
+  background: darkgray;
+  padding: 5px 10px 5px 10px;
+  margin: 5px 5px 5px 2px;
+}
+
+#battery.charging,
+#battery.plugged {
+  background: lightgreen;
+}
+
+/* from styling link https://github.com/Alexays/Waybar/wiki/Styling */
+@keyframes blink {
+  to {
+    background-color: #ffffff;
+    color: black;
+  }
+}
+
+#battery.warning:not(.charging) {
+  background: #f53c3c;
+  color: white;
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: steps(12);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}

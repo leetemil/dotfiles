@@ -1,0 +1,28 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+[character] # The name of the module we are configuring is 'character'
+success_symbol = '[%](bold green)'
+error_symbol = '[%](bold red)'
+
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
+
+[kubernetes]
+disabled = false
+symbol = '🌀 '
+contexts = [
+  { context_pattern = 'emp-(?P<var_cluster>[\w]+)-k8s-cph3', context_alias = '$var_cluster' },
+]
+
+[nix_shell]
+disabled = false
+symbol = '🦕'
+impure_msg = '[impure](bold red)'
+pure_msg = '[pure](bold green)'
+unknown_msg = '[unknown](bold yellow)'
+format = '[$symbol nix-shell $state( \($name\))](bold blue) '
