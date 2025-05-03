@@ -95,6 +95,9 @@
     terraform
     terraform-ls
     yaml-language-server
+
+    # other
+    typst
   ];
 
   # This value determines the NixOS release from which the default settings for stateful data, like file 

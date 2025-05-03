@@ -14,10 +14,12 @@ There is no official WSL distro for NixOS, but the community have one here https
 - some emojis do not render out of the box with font `Cascadia Code`;
   go get the latest release here https://github.com/microsoft/cascadia-code/releases and install a Nerd Font (NF) variant.
   Set font to `Cascadia Code NF` in WSL.
-- Now that you're this far, go ahead and symlink the configuration:
+- Now that you're this far, go ahead and symlink the NixOS config:
   ```sh
-  # `cd` to the root of the dotfiles repo, then do
-  % sudo ln --symbolic --force "./wsl/configuration.nix" /etc/nixos/
-  % sudo ln --symbolic --force "./wsl/flake.nix" /etc/nixos/
+  # optionally do backup first
+  % sudo mv /etc/nixos/ /etc/nixos.backup/
+  # do link with absolute path; modify as needed
+  % sudo ln --symbolic --force /home/epe/repos/dotfiles/wsl/ /etc/nixos/
   ```
 - Symlink other things with `./wsl/setup.nu`; see script for details.
+
