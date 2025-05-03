@@ -1,12 +1,4 @@
-def clone_repo [url: string, repo: string] {
-  if ($repo | path exists) {
-    print $"($repo) already exists; exiting"
-    return
-  }
-
-  mkdir $repo
-  git clone $'($url)' $'($repo)'
-}
+#! /run/current-system/sw/bin/nu
 
 def setup [repo: string, parts: list<string>, --wsl]  {
   if not $wsl {
@@ -14,17 +6,14 @@ def setup [repo: string, parts: list<string>, --wsl]  {
     return
   }
 
-  ln --symbolic --force $"($repo)/wsl/configuration.nix" /etc/nixos/
-  ln --symbolic --force $"($repo)/wsl/flake.nix" /etc/nixos/
-
-  let config_dir = $"/home/epe/.config/"
+  let config_dir = $"($env.HOME)/.config/"
 
   if not ($config_dir | path exists) {
     print $"Making ($config_dir)"
     mkdir $config_dir
   }
 
-  $parts | each {|part| setup_part $repo $config_dir $part}
+  $parts | each {|part| setup_part $repo $config_dir $part} 
 }
 
 def setup_part [repo: string, config_dir: string, part: string] {
@@ -32,11 +21,10 @@ def setup_part [repo: string, config_dir: string, part: string] {
 
   # aggressively(!) remove existing config
   remove_existing $"($config_dir)/($part)"
-
   ln --symbolic --force $"($repo)/($part)" --target-directory $config_dir
 
   if $part == "nushell" {
-    let cache_dir = $"/home/epe/.cache/carapace/"
+    let cache_dir = $"($env.HOME)/.cache/carapace/"
     if not ($cache_dir | path exists) {
       mkdir $cache_dir
     }
@@ -45,7 +33,6 @@ def setup_part [repo: string, config_dir: string, part: string] {
 }
 
 def remove_existing [target: string] {
-
   let is_symlink = ($target | path type) == 'symlink'
 
   if $is_symlink {
@@ -55,8 +42,6 @@ def remove_existing [target: string] {
   }
 }
 
-let repo_url = "https://github.com/leetemil/dotfiles.git"
-let repo_dir = $"/home/epe/repos/dotfiles"
-
-clone_repo  $repo_url $repo_dir
+# actually do things
+let repo_dir = $"($env.HOME)/repos/dotfiles"
 setup --wsl $repo_dir ["nushell" "helix" "starship.toml"]
