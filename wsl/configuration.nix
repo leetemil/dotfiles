@@ -9,6 +9,7 @@
 { imports = [
     # include NixOS-WSL modules
     <nixos-wsl/modules>
+    ./certs.nix
   ];
 
 
@@ -37,9 +38,7 @@
 
   nixpkgs.config = {
     allowUnfree = true;
-    permittedInsecurePackages = [
-      
-    ];
+    permittedInsecurePackages = [];
   };
 
   programs.nix-ld = {
@@ -79,6 +78,7 @@
     which
     yazi
     yq
+    unzip
 
     # nix nice-to-have
     patchelf
@@ -92,13 +92,40 @@
     nil
     nixd
     powershell
+    powershell-editor-services
     terraform
     terraform-ls
     yaml-language-server
 
     # other
     typst
+
+    # python3
+    (python3.withPackages(ps: with ps; [ 
+      treelib 
+      pyyaml
+      setuptools
+      natsort
+      pydantic
+      pydantic-extra-types
+      requests
+      boto3
+      botocore
+      ruff
+      "azure.mgmt"
+    ]))
   ];
+
+  # fonts
+  fonts.packages = with pkgs; [
+    fira-code
+    fira-code-symbols
+    jetbrains-mono
+    font-awesome
+    noto-fonts
+    powerline-fonts
+    fira-sans
+  ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
 
   # This value determines the NixOS release from which the default settings for stateful data, like file 
   # locations and database versions on your system were taken. It's perfectly fine and recommended to leave this 
