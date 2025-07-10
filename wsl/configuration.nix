@@ -79,6 +79,7 @@
     yazi
     yq
     unzip
+    tree
 
     # nix nice-to-have
     patchelf
@@ -99,6 +100,12 @@
 
     # other
     typst
+
+    # go
+    go
+    golangci-lint-langserver
+    golangci-lint
+    gopls
 
     # python3
     (python3.withPackages(ps: with ps; [ 
