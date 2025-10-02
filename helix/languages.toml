@@ -1,10 +1,10 @@
+
 [[language]]
 name = "go"
 auto-format = true
 # wait with golangci-lint until 1.60.1 or something; there is a bug atm (2024-08-15)
 # it will use all memory
 language-servers = ["golangci-lint", "gopls"]
-# language-servers = ["gopls"]
 formatter = { command = "goimports" }
 
 [language-server.pyright-langserver]
@@ -60,3 +60,26 @@ formatter = { command = "dotnet", args = ["format"] }
 
 [language-server.csharp-language-server]
 command = "csharp-ls"
+
+[[language]]
+name = "rust"
+
+[language-server.rust-analyzer]
+config = { procMacro = { ignored = { leptos_macro = [
+  # "component",
+  "server"
+]}}}
+
+[[language]]
+name = "markdown"
+
+# I want line wraps after 80 chars
+text-width = 80
+soft-wrap = {enable = true, wrap-at-text-width = true}
+
+[[language]]
+name = "hcl"
+language-servers = [ "terraform-lsp", "terraform-ls" ]
+
+[language-server.terraform-lsp]
+command = "terraform-lsp"

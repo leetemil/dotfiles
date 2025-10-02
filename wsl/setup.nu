@@ -6,6 +6,7 @@ def setup [repo: string, parts: list<string>, --wsl]  {
     return
   }
 
+  sadfgsdfasdf
   let config_dir = $"($env.HOME)/.config/"
 
   if not ($config_dir | path exists) {

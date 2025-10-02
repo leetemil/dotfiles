@@ -12,6 +12,13 @@
     ./certs.nix
   ];
 
+  virtualisation.docker = {
+    enable = true;
+    rootless = {
+      enable = true;
+      setSocketVariable = true;
+    };
+  };
 
   wsl.enable = true; wsl.defaultUser = "epe";
 
@@ -80,12 +87,15 @@
     yq
     unzip
     tree
+    docker
+
+    azure-artifacts-credprovider
+    marp-cli
 
     # nix nice-to-have
     patchelf
 
     # lsp/language stuff
-    azure-cli
     bash-language-server
     black
     csharp-ls
@@ -96,10 +106,23 @@
     powershell-editor-services
     terraform
     terraform-ls
+    terraform-lsp
     yaml-language-server
+    pyright
+    starlark-rust
+    unison-ucm
+
+    # build systems
+    buck2
 
     # other
     typst
+    gcc
+    ollama
+    lsp-ai
+    glow
+
+    nodejs_22
 
     # go
     go
@@ -107,9 +130,21 @@
     golangci-lint
     gopls
 
+    # rust
+    rustup
+    trunk
+    leptosfmt
+    cargo-leptos
+    # rust-analyzer
+
+    # az cli
+    (azure-cli.withExtensions [
+       azure-cli.extensions.azure-devops
+    ])
+
     # python3
     (python3.withPackages(ps: with ps; [ 
-      treelib 
+      # treelib 
       pyyaml
       setuptools
       natsort
@@ -120,6 +155,8 @@
       botocore
       ruff
       "azure.mgmt"
+      python-lsp-server
+      python-lsp-ruff
     ]))
   ];
 
