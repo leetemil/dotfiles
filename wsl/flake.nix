@@ -5,14 +5,21 @@
   };
 
   # self, nixos-wsl currently unused, but put in place anyway
-  outputs = { self, nixpkgs, nixos-wsl, ... }: {
-    nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./configuration.nix
-        ];
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixos-wsl,
+      ...
+    }:
+    {
+      nixosConfigurations = {
+        nixos = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./configuration.nix
+          ];
+        };
       };
     };
-  };
 }
