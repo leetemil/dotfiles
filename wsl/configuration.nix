@@ -45,6 +45,7 @@
         "systemd-journal"
       ];
       packages = [ ];
+
     };
   };
 
@@ -68,6 +69,11 @@
     libraries = [
       # add missing dynamic libs here, not in env sys packages
     ];
+  };
+
+  environment.variables = {
+    DOTNET_CLI_HOME = "$HOME/.dotnet";
+    NUGET_PLUGIN_PATHS = "${pkgs.azure-artifacts-credprovider}/libexec/NuGetPlugins/CredentialProvider.Microsoft.dll";
   };
 
   environment.systemPackages = with pkgs; [
