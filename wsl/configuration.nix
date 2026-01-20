@@ -110,6 +110,9 @@
     unzip
     tree
     docker
+    podman
+    gh
+    ollama
 
     azure-artifacts-credprovider
     marp-cli
@@ -133,7 +136,7 @@
     pyright
     starlark-rust
     unison-ucm
-    nixfmt-rfc-style
+    nixfmt
     vscode-json-languageserver
 
     # build systems

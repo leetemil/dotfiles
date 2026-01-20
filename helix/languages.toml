@@ -6,8 +6,6 @@ auto-format = true
 [[language]]
 name = "go"
 auto-format = true
-# wait with golangci-lint until 1.60.1 or something; there is a bug atm (2024-08-15)
-# it will use all memory
 language-servers = ["golangci-lint", "gopls"]
 formatter = { command = "goimports" }
 
@@ -16,8 +14,8 @@ command = "pyright-langserver"
 args = ["--stdio"]
 config = { autoSearchPaths = true, diagnosticMode = "workspace" }
 
-[language-server.ruff-lsp]
-command = "ruff-lsp"
+[language-server.ruff.config.settings]
+lineLength = 80
 
 [language-server.golangci-lint]
 command = "golangci-lint" 
@@ -35,8 +33,8 @@ indent = { tab-width = 4, unit = "    "}
 [[language]]
 name = "python"
 auto-format = true
-formatter = { command = "black", args = ["--quiet", "-"]}
-language-servers = ["pyright-langserver", "ruff-lsp", "pylsp"]
+formatter = { command = "ruff", args = ["format", "--quiet", "--respect-gitignore", "-"]}
+language-servers = ["ruff", "pyright-langserver", "pylsp"]
 
 [[language]]
 name = "yaml"

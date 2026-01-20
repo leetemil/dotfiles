@@ -6,7 +6,6 @@ def setup [repo: string, parts: list<string>, --wsl]  {
     return
   }
 
-  sadfgsdfasdf
   let config_dir = $"($env.HOME)/.config/"
 
   if not ($config_dir | path exists) {
@@ -22,7 +21,7 @@ def setup_part [repo: string, config_dir: string, part: string] {
 
   # aggressively(!) remove existing config
   remove_existing $"($config_dir)/($part)"
-  ln --symbolic --force $"($repo)/($part)" --target-directory $config_dir
+  ln --symbolic --force $"($repo)/($part)" $config_dir
 
   if $part == "nushell" {
     let cache_dir = $"($env.HOME)/.cache/carapace/"
