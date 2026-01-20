@@ -95,6 +95,7 @@
     helix
     starship
     zellij
+    helix-gpt
 
     # nushell completion
     carapace
@@ -133,6 +134,7 @@
     starlark-rust
     unison-ucm
     nixfmt-rfc-style
+    vscode-json-languageserver
 
     # build systems
     buck2
@@ -141,8 +143,8 @@
     typst
     gcc
     ollama
-    lsp-ai
     glow
+    rabbitmq-server
 
     nodejs_22
 
