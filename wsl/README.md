@@ -23,3 +23,8 @@ There is no official WSL distro for NixOS, but the community have one here https
   ```
 - Symlink other things with `./wsl/setup.nu`; see script for details.
 
+### Other things
+- The `git` (Git for Windows) integration should have all the things you need, but you need to run this magic spell for it to work:
+  ```
+  git config --global credential.helper '/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'
+  ```
