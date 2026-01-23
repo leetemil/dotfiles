@@ -1,5 +1,5 @@
 There is no official WSL distro for NixOS, but the community have one here https://github.com/nix-community/NixOS-WSL
-- put `wsl/configuration.nix` and `wsl/flake.nix` in `/etc/nixos/`
+- put `wsl/configuration.nix`, `wsl/certs.nix` and `wsl/flake.nix` in `/etc/nixos/`
 - run
   ```
   $ sudo nix flake update --flake /etc/nixos/ \
