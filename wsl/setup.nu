@@ -44,4 +44,4 @@ def remove_existing [target: string] {
 
 # actually do things
 let repo_dir = $"($env.HOME)/repos/dotfiles"
-setup --wsl $repo_dir ["nushell" "helix" "starship.toml"]
+setup --wsl $repo_dir ["nushell" "helix" "starship.toml", "zellij"]

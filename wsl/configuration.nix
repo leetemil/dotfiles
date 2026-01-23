@@ -13,16 +13,11 @@
     ./certs.nix
   ];
 
-  virtualisation.docker = {
+  wsl = {
     enable = true;
-    rootless = {
-      enable = true;
-      setSocketVariable = true;
-    };
+    defaultUser = "epe";
+    docker-desktop.enable = true;
   };
-
-  wsl.enable = true;
-  wsl.defaultUser = "epe";
 
   users.users = {
     epe = {
