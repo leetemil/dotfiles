@@ -113,6 +113,7 @@
     podman
     gh
     ollama
+    langgraph-cli
 
     azure-artifacts-credprovider
     marp-cli
