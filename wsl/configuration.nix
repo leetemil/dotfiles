@@ -134,6 +134,7 @@
     unison-ucm
     nixfmt
     vscode-json-languageserver
+    svelte-language-server
 
     # build systems
     buck2
@@ -145,7 +146,7 @@
     glow
     rabbitmq-server
 
-    nodejs_22
+    nodejs
 
     # go
     go
