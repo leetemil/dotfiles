@@ -1,4 +1,5 @@
 There is no official WSL distro for NixOS, but the community have one here https://github.com/nix-community/NixOS-WSL
+- install the NixOS-WSL, i.e. download the latest and greatest `nixos.wsl` from the [release page](https://github.com/nix-community/NixOS-WSL/releases)
 - on your fresh WSL install, clone this repo with:
 ```sh
 $ nix-shell -p git --run 'git clone https://github.com/leetemil/dotfiles.git'
@@ -8,6 +9,10 @@ $ nix-shell -p git --run 'git clone https://github.com/leetemil/dotfiles.git'
 # do link with absolute path; modify as needed
 sudo rm -rf /etc/nixos
 sudo ln --symbolic --force /home/epe/repos/dotfiles/wsl/ /etc/nixos
+```
+- do the [username switch](https://nix-community.github.io/NixOS-WSL/how-to/change-username.html). That is:
+```sh
+$ 
 ```
 - run this command to update flake inputs:
 ```sh
