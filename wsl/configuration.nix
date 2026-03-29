@@ -90,7 +90,6 @@
     helix
     starship
     zellij
-    helix-gpt
 
     # nushell completion
     carapace
@@ -109,6 +108,7 @@
     gh
     ollama
     langgraph-cli
+    claude-code
 
     azure-artifacts-credprovider
     marp-cli
@@ -133,8 +133,11 @@
     starlark-rust
     unison-ucm
     nixfmt
-    vscode-json-languageserver
+    superhtml
     svelte-language-server
+    typescript
+    typescript-language-server
+    vscode-langservers-extracted
 
     # build systems
     buck2
